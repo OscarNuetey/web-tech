@@ -351,66 +351,84 @@ body {
 }
 
 @media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
+    justify-content: center;
+  }
+
   .hero {
     flex-direction: column;
     text-align: center;
   }
 
+  .hero-text h1 {
+    font-size: 2.1rem;
+  }
+
   .products-grid {
     grid-template-columns: 1fr;
   }
-  /* Mobile Responsiveness (Requirement 9) */
-@media (max-width: 768px) {
-  /* Stack navigation vertically */
-  header, nav, .navbar, .nav-links {
+
+  .footer-content {
     flex-direction: column;
-    align-items: center;
+    gap: 1rem;
     text-align: center;
-    gap: 10px;
   }
 
-  /* Resize hero text and cart badge */
-  .hero h1, .hero-text h1 {
-    font-size: 1.6rem;
-    line-height: 1.3;
-  }
-
-  .hero p, .hero-text p {
-    font-size: 0.95rem;
-  }
-
-  #cart-count, .cart-badge {
-    font-size: 0.75rem;
-    padding: 2px 6px;
-  }
-
-  /* Make modals and cart tables scrollable on small screens */
-  .modal-content, .cart-modal-content, .summary-modal-content {
-    width: 92%;
-    max-width: 92%;
-    max-height: 85vh;
+  .modal-box,
+  .summary-box {
+    width: 95%;
+    max-width: 95vw;
+    max-height: 90vh;
     overflow-y: auto;
-    padding: 15px;
-    margin: 20px auto;
+    padding: 1.2rem;
   }
 
-  table {
+  .cart-table,
+  .summary-table {
     display: block;
     width: 100%;
     overflow-x: auto;
     white-space: nowrap;
   }
 
-  /* Fit forms, inputs, and buttons to mobile widths */
-  form, .checkout-form {
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .modal-actions button,
+  .summary-footer button,
+  .user-details-form input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .cart-btn {
     width: 100%;
   }
 
-  input, select, textarea, button, .btn, .checkout-btn {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    font-size: 1rem;
+  .modal-box,
+  .summary-box {
+    padding: 1rem;
   }
-}
 }

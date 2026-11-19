@@ -3,41 +3,45 @@ const products = [
     id: 1,
     name: "SAMSUNG TV",
     price: 500000,
-    image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=500&q=80"
+    image: "https://unsplash.com"
   },
   {
     id: 2,
     name: "PIXEL 4a",
     price: 250000,
-    image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500&q=80"
+    image: "https://unsplash.com"
   },
   {
     id: 3,
     name: "PS 5",
     price: 800000,
-    image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=500&q=80"
+    image: "https://unsplash.com"
   },
   {
     id: 4,
     name: "MACBOOK AIR",
     price: 800000,
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80"
+    image: "https://unsplash.com"
   },
   {
     id: 5,
     name: "APPLE WATCH",
     price: 95000,
-    image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500&q=80"
+    image: "https://unsplash.com"
   },
   {
     id: 6,
     name: "AIR PODS",
     price: 75000,
-    image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=500&q=80"
+    image: "https://unsplash.com"
   }
 ];
 
 let cart = [];
+
+// Centralized currency configuration (Change to "NGN" and "₦" if your Paystack account is Nigerian)
+const CURRENCY_CODE = "GHS";
+const CURRENCY_SYMBOL = "GH₵";
 
 const productsGrid = document.getElementById("products-grid");
 const cartBtn = document.getElementById("cart-btn");
@@ -61,7 +65,7 @@ const summaryBody = document.getElementById("summary-body");
 const summaryOkBtn = document.getElementById("summary-ok-btn");
 
 function formatMoney(amount) {
-  return `₦${amount.toLocaleString()}`;
+  return `${CURRENCY_SYMBOL}${amount.toLocaleString()}`;
 }
 
 function renderProducts() {
@@ -71,7 +75,11 @@ function renderProducts() {
       return `
         <div class="product-card" data-id="${product.id}">
           <div class="product-img-wrap">
-            <img src="${product.image}" alt="${product.name}" />
+            <img 
+              src="${product.image}" 
+              alt="${product.name}" 
+              onerror="this.onerror=null; this.src='https://placehold.co{encodeURIComponent(product.name)}';"
+            />
             <div class="price-overlay">
               <span>Price</span>
               <strong>${formatMoney(product.price)}</strong>
@@ -268,10 +276,10 @@ checkoutBtn.addEventListener("click", () => {
   }
 
   const handler = PaystackPop.setup({
-    key: "pk_test_94fd0e1bdf8afbbd29d5ff2ba454eb1119974634",
+    key: "pk_test_xxxxxxxxxxxxxxxxxxxxxxxx", // Replace with your actual Paystack test public key
     email: customerEmail,
-    amount: totalAmount * 100,
-    currency: "GHS",
+    amount: Math.round(totalAmount * 100),
+    currency: CURRENCY_CODE,
     callback: function () {
       showSummaryModal(customerName);
     },
@@ -285,7 +293,6 @@ checkoutBtn.addEventListener("click", () => {
 
 function showSummaryModal(customerName) {
   summaryGreeting.textContent = `Thank You, ${customerName}, Your Order has been Received`;
-  
   summaryBody.innerHTML = cart
     .map(
       (item, index) => `
@@ -298,25 +305,29 @@ function showSummaryModal(customerName) {
     )
     .join("");
 
-  // 1. Clear the cart array and localStorage immediately
+  // Clear cart and update product buttons + cart UI immediately
   cart = [];
-  localStorage.removeItem("cart"); // Safe to keep even if you don't use localStorage
+  updateUI();
 
-  // 2. Reset the cart UI and badge count to 0 right away
-  if (typeof updateCartUI === "function") {
-    updateCartUI(); // Replace with your actual cart render/update function name
-  } else {
-    const cartCount = document.getElementById("cart-count");
-    if (cartCount) cartCount.textContent = "0";
-  }
-
-  // 3. Display the summary modal
   summaryModal.classList.add("active");
 }
 
 summaryOkBtn.addEventListener("click", () => {
   summaryModal.classList.remove("active");
-  // Reset checkout form fields cleanly instead of reloading the entire page
+
+  // Clear all form inputs including phoneInput
   nameInput.value = "";
   emailInput.value = "";
+  phoneInput.value = "";
+
+  // Remove .invalid classes and clear error messages for all fields
+  [nameInput, emailInput, phoneInput].forEach((input) => {
+    input.classList.remove("invalid");
+  });
+  [nameError, emailError, phoneError].forEach((errorEl) => {
+    errorEl.textContent = "";
+  });
 });
+
+updateUI();
+
